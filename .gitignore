@@ -1,0 +1,9 @@
+# 软链接引入的本地 skills
+skills/tonghuashun-skills
+skills/dongfangcaifu-skills
+skills/twitter-user-posts
+
+# 本地 agent 配置目录
+.agents/
+.claude/
+.codex/
