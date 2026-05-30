@@ -2,6 +2,7 @@
 skills/tonghuashun-skills
 skills/dongfangcaifu-skills
 skills/twitter-user-posts
+skills/a-stock-data
 
 # 本地 agent 配置目录
 .agents/
