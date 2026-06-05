@@ -459,8 +459,8 @@ data/intraday/
 新增适配器建议：
 
 ```text
-TradingAgents-astock/tradingagents/dataflows/easy_tdx_provider.py
-TradingAgents-astock/tradingagents/dataflows/tdx_fallback.py
+apps/intraday-t/src/intraday_t/data/easy_tdx_provider.py
+apps/intraday-t/src/intraday_t/data/tdx_fallback.py
 ```
 
 主备策略：
@@ -491,7 +491,7 @@ class TdxProvider:
 新增脚本建议：
 
 ```text
-TradingAgents-astock/scripts/intraday_collector.py
+apps/intraday-t/scripts/intraday_collector.py
 ```
 
 功能：
@@ -507,7 +507,7 @@ TradingAgents-astock/scripts/intraday_collector.py
 新增脚本建议：
 
 ```text
-TradingAgents-astock/scripts/intraday_t_analyzer.py
+apps/intraday-t/scripts/intraday_t_analyzer.py
 ```
 
 功能：
