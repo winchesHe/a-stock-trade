@@ -2,7 +2,7 @@
 
 实时做 T 独立工具，规划为开盘订阅指定 A 股实时行情、本地落盘、分钟聚合、盘中信号分析与盘后复盘。
 
-当前状态：阶段 2 分钟聚合器开发中。
+当前状态：阶段 3 基础信号引擎开发中。
 
 设计文档：`../../docs/intraday-t-tool-design.md`
 
@@ -61,4 +61,27 @@ python apps/intraday-t/scripts/intraday_aggregator.py \
 
 ```text
 apps/intraday-t/data/intraday/<交易日>/minute/<股票代码>_1m.jsonl
+```
+
+生成基础做 T 信号：
+
+```bash
+python apps/intraday-t/scripts/intraday_signal.py \
+  --codes 002463,600941 \
+  --day 2026-06-05
+```
+
+无底仓时只输出禁止交易信号：
+
+```bash
+python apps/intraday-t/scripts/intraday_signal.py \
+  --codes 002463 \
+  --day 2026-06-05 \
+  --no-position
+```
+
+信号默认写入：
+
+```text
+apps/intraday-t/data/intraday/<交易日>/signals/<股票代码>_signals.jsonl
 ```

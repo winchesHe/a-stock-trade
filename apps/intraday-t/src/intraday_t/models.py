@@ -50,6 +50,24 @@ class MinuteBar:
         return asdict(self)
 
 
+@dataclass(slots=True)
+class Signal:
+    ts: str
+    code: str
+    signal: str
+    strength: int
+    action: str
+    position_required: bool
+    price: float
+    reference_price: float | None = None
+    stop_condition: str | None = None
+    reasons: list[str] = field(default_factory=list)
+    risk_flags: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
 def normalize_code(code: str) -> str:
     digits = "".join(ch for ch in str(code).strip() if ch.isdigit())
     if len(digits) != 6:

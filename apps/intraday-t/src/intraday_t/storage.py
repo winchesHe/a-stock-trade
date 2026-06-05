@@ -5,7 +5,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-from .models import MinuteBar, Snapshot, normalize_code
+from .models import MinuteBar, Signal, Snapshot, normalize_code
 
 
 def trading_day(value: date | None = None) -> str:
@@ -22,6 +22,12 @@ def minute_bar_path(base_dir: Path, code: str, day: str | None = None) -> Path:
     safe_code = normalize_code(code)
     session_day = day or trading_day()
     return base_dir / "intraday" / session_day / "minute" / f"{safe_code}_1m.jsonl"
+
+
+def signal_path(base_dir: Path, code: str, day: str | None = None) -> Path:
+    safe_code = normalize_code(code)
+    session_day = day or trading_day()
+    return base_dir / "intraday" / session_day / "signals" / f"{safe_code}_signals.jsonl"
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -70,4 +76,15 @@ class MinuteBarWriter:
     def write_all(self, code: str, bars: list[MinuteBar]) -> Path:
         path = minute_bar_path(self.base_dir, code, self.day)
         write_jsonl(path, [bar.to_dict() for bar in bars])
+        return path
+
+
+class SignalWriter:
+    def __init__(self, base_dir: Path, day: str | None = None) -> None:
+        self.base_dir = base_dir
+        self.day = day
+
+    def write_all(self, code: str, signals: list[Signal]) -> Path:
+        path = signal_path(self.base_dir, code, self.day)
+        write_jsonl(path, [signal.to_dict() for signal in signals])
         return path

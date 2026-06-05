@@ -15,6 +15,7 @@ dependencies = [
 [project.scripts]
 intraday-collector = "intraday_t.collector:main"
 intraday-aggregator = "intraday_t.aggregator:main"
+intraday-signal = "intraday_t.signals:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
