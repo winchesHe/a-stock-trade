@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intraday-t"
+version = "0.1.0"
+description = "A 股实时做 T 辅助工具"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "websockets>=12.0",
+]
+
+[project.scripts]
+intraday-collector = "intraday_t.collector:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

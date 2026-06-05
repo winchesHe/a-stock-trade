@@ -8,3 +8,7 @@ skills/a-stock-data
 .agents/
 .claude/
 .codex/
+
+# intraday-t 本地采集产物
+apps/intraday-t/data/
+apps/intraday-t/reports/
