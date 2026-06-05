@@ -2,7 +2,7 @@
 
 实时做 T 独立工具，规划为开盘订阅指定 A 股实时行情、本地落盘、分钟聚合、盘中信号分析与盘后复盘。
 
-当前状态：阶段 1 最小采集器开发中。
+当前状态：阶段 2 分钟聚合器开发中。
 
 设计文档：`../../docs/intraday-t-tool-design.md`
 
@@ -48,3 +48,17 @@ apps/intraday-t/data/intraday/<交易日>/raw/<股票代码>.jsonl
 ```
 
 `--once` 不是只支持单只股票，而是每只订阅股票收到第一条有效快照后退出。
+
+生成 1 分钟聚合数据：
+
+```bash
+python apps/intraday-t/scripts/intraday_aggregator.py \
+  --codes 002463,600941 \
+  --day 2026-06-05
+```
+
+分钟聚合默认写入：
+
+```text
+apps/intraday-t/data/intraday/<交易日>/minute/<股票代码>_1m.jsonl
+```

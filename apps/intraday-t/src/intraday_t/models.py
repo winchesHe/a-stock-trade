@@ -28,6 +28,28 @@ class Snapshot:
         return asdict(self)
 
 
+@dataclass(slots=True)
+class MinuteBar:
+    minute: str
+    code: str
+    open: float
+    high: float
+    low: float
+    close: float
+    vwap: float | None = None
+    amount_delta: float | None = None
+    volume_delta: float | None = None
+    turnover_ratio: float | None = None
+    price_vs_vwap_pct: float | None = None
+    price_vs_open_pct: float | None = None
+    price_vs_pre_close_pct: float | None = None
+    day_high_so_far: float | None = None
+    day_low_so_far: float | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
 def normalize_code(code: str) -> str:
     digits = "".join(ch for ch in str(code).strip() if ch.isdigit())
     if len(digits) != 6:
