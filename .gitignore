@@ -9,6 +9,10 @@ skills/a-stock-data
 .claude/
 .codex/
 
+# Python 缓存
+__pycache__/
+*.py[cod]
+
 # intraday-t 本地采集产物
 apps/intraday-t/data/
 apps/intraday-t/reports/
