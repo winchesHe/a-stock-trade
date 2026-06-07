@@ -20,3 +20,6 @@ apps/intraday-t/reports/
 # 本地扫描结果与行情缓存
 output/scans/
 output/cache/
+
+# 统一股票数据资产（本地生成，不提交）
+data/stock-data/
