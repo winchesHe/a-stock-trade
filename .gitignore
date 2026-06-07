@@ -16,3 +16,7 @@ __pycache__/
 # intraday-t 本地采集产物
 apps/intraday-t/data/
 apps/intraday-t/reports/
+
+# 本地扫描结果与行情缓存
+output/scans/
+output/cache/
