@@ -40,6 +40,18 @@ python -m pytest tests/ -v
 
 注意：`python -m pip install -e .` 会安装 `mootdx`，并可能把当前环境的 `httpx/openai/anthropic` 改到项目依赖版本；如果同一 Python 环境还跑 `browser-use`、`mcp`、`google-genai`，先建独立虚拟环境再装。
 
+通达信主源验证（在独立虚拟环境或 `apps/TradingAgents-astock/.venv` 内执行）：
+
+```bash
+python -m pip install easy-tdx==1.5.0
+easy-tdx kline SZ 002475 --count 5 --table
+easy-tdx quote "SZ 002475" --table
+easy-tdx indicator MACD -m SZ -c 002475 --count 5 --table
+easy-tdx board-ranking --type HY --top 10 --table
+```
+
+`easy-tdx ping` 可能因单个通达信服务器断连而抛错；验证可用性时优先跑具体的 `kline` / `quote` / `indicator` 命令。
+
 ## 关键路径
 
 - `apps/TradingAgents-astock/tradingagents/dataflows/a_stock.py`：A 股数据入口，行情/估值/新闻/龙虎榜/解禁/行业等接口。
@@ -49,7 +61,7 @@ python -m pytest tests/ -v
 - `apps/TradingAgents-astock/web/components/report_viewer.py`：Web 报告详情展示。
 - `apps/TradingAgents-astock/reports/`：本地 HTML/截图报告目录；Web UI 不直接读取这里。
 - `apps/TradingAgents-astock/examples/cases/`：示例案例 Markdown。
-- `apps/intraday-t/`：实时做 T 独立工具目录，主用百度 WebSocket + easy_tdx，mootdx fallback。
+- `apps/intraday-t/`：实时做 T 独立工具目录，主用百度 WebSocket + easy_tdx，mootdx 兜底。
 
 ## Web UI 数据规则
 
@@ -60,9 +72,13 @@ python -m pytest tests/ -v
 
 ## A 股数据接口规则
 
+- 通达信在线数据新功能优先用 `easy_tdx`：适合 K 线、分钟线、实时报价、逐笔、板块列表/成分/排行/汇总、个股资金流、集合竞价、市场异动、内置指标（如 `MACD`、`KDJ`、`RSI`、`BOLL`、`BIAS_SIGNAL`、`ZHUOYAO`）。
+- `mootdx` 是当前 `apps/TradingAgents-astock` 已接入的兼容源，适合历史 K 线、分钟线、基础报价、股票池、F10、财务文件、本地通达信离线数据；新功能仅在 `easy_tdx` 未安装、连接失败、字段缺失或任务要求兼容现有 `a_stock.py` 时用作兜底。
+- 业务代码不要直接散落依赖具体库；新增数据能力优先封装统一 provider：`easy_tdx` 主源 → `mootdx` 兜底 → 必要时新浪/腾讯等 HTTP 兜底。
+- 腾讯财经用于实时估值/市值/换手/量比/涨跌停等补充字段；`mootdx` 不提供 PE/PB/市值/涨跌停价。
 - 新增东财接口必须走 `a_stock.py` 内 `_em_get()`，不要裸 `requests.get` 访问 `eastmoney.com`。
 - 东财接口串行限流；批量场景可设置 `EM_MIN_INTERVAL=1.5` 或更高。
-- 行情/估值优先用 mootdx TCP 和腾讯财经；东财只用于其独有数据，如龙虎榜、解禁、资金流、新闻。
+- 东财只用于其独有数据，如龙虎榜、解禁、东财资金流、新闻、公告、研报、行业板块等；不要用东财替代可由 `easy_tdx` / `mootdx` / 腾讯稳定取得的基础行情。
 - 外部源失败要在报告中标注：例如百度概念接口可能 403，东财资金流可能远端断开。
 
 ## 本地记录：沪电股份更新
