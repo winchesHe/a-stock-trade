@@ -58,6 +58,29 @@ python apps/intraday-t/scripts/intraday_live.py \
 
 按 `Ctrl+C` 会同时停止采集和信号展示。
 
+启动本地 Web UI：
+
+```bash
+cd apps/intraday-t
+make web
+```
+
+也可以直接运行脚本，或安装开发包后运行命令入口：
+
+```bash
+python apps/intraday-t/scripts/intraday_web.py
+intraday-web
+```
+
+Web UI 会在浏览器中提供：
+
+- 输入股票代码、交易日、数据目录、底仓状态和开盘禁交易分钟数。
+- 启动/停止百度财经 WebSocket 实时采集，继续写入现有 raw JSONL。
+- 手动刷新分钟聚合与做 T 信号。
+- 查看采集状态、最新快照、最新信号、信号历史和 1 分钟数据。
+
+边界：Web UI 只做本地看盘、落盘和解释型信号展示，不接券商接口，不自动下单，不构成交易建议。
+
 原始快照默认写入：
 
 ```text
