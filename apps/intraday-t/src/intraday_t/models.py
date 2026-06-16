@@ -51,6 +51,33 @@ class MinuteBar:
 
 
 @dataclass(slots=True)
+class PositionContext:
+    has_base_position: bool = True
+    base_shares: int | None = None
+    planned_t_shares: int | None = None
+    opened_side: str | None = None
+    opened_price: float | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(slots=True)
+class IntradayContext:
+    regime: str
+    confidence: int
+    open_range_high: float | None = None
+    open_range_low: float | None = None
+    recent_high: float | None = None
+    recent_low: float | None = None
+    reasons: list[str] = field(default_factory=list)
+    risk_flags: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(slots=True)
 class Signal:
     ts: str
     code: str
@@ -63,6 +90,9 @@ class Signal:
     stop_condition: str | None = None
     reasons: list[str] = field(default_factory=list)
     risk_flags: list[str] = field(default_factory=list)
+    strategy: str | None = None
+    regime: str | None = None
+    position_state: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
