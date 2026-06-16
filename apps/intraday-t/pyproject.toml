@@ -16,6 +16,8 @@ dependencies = [
 intraday-collector = "intraday_t.collector:main"
 intraday-aggregator = "intraday_t.aggregator:main"
 intraday-signal = "intraday_t.signals:main"
+intraday-monitor = "intraday_t.monitor:main"
+intraday-live = "intraday_t.live:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

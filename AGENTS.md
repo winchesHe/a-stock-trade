@@ -40,6 +40,27 @@ python -m pytest tests/ -v
 
 注意：`python -m pip install -e .` 会安装 `mootdx`，并可能把当前环境的 `httpx/openai/anthropic` 改到项目依赖版本；如果同一 Python 环境还跑 `browser-use`、`mcp`、`google-genai`，先建独立虚拟环境再装。
 
+## Python 环境与 easy-tdx
+
+- 本仓库可能同时存在多个 Python 环境；不要只用当前 `which python` / `import easy_tdx` 结果判断 `easy-tdx` 是否安装。
+- `easy-tdx` 优先检查项目虚拟环境：`apps/TradingAgents-astock/.venv`。当前 shell 未激活 `.venv` 时，直接用完整路径运行：
+
+```bash
+apps/TradingAgents-astock/.venv/bin/python -m pip show easy-tdx
+apps/TradingAgents-astock/.venv/bin/easy-tdx quote "SZ 002463" --table
+apps/TradingAgents-astock/.venv/bin/easy-tdx kline SZ 002463 --count 3 --table
+```
+
+- 进入主应用开发/验证前建议先激活项目环境：
+
+```bash
+cd apps/TradingAgents-astock
+source .venv/bin/activate
+```
+
+- 只有 `apps/TradingAgents-astock/.venv/bin/python -m pip show easy-tdx` 也查不到时，才判定 `easy-tdx` 未安装；当前默认 Python 查不到通常只是环境未激活。
+- 名称不要混用：pip 包名是 `easy-tdx`，Python import 名是 `easy_tdx`，CLI 命令是 `easy-tdx`。
+
 通达信主源验证（在独立虚拟环境或 `apps/TradingAgents-astock/.venv` 内执行）：
 
 ```bash
