@@ -456,18 +456,29 @@ def _failed_second_high_sell(bars: list[MinuteBar], position: PositionContext, c
         return None
 
     latest = bars[-1]
-    early = bars[:-3]
-    late = bars[-3:]
-    prior_high_bar = max(early, key=lambda item: item.high)
-    second_high_bar = max(late, key=lambda item: item.high)
-    if prior_high_bar.high <= 0:
-        return None
+    candidate_indexes = range(max(0, len(bars) - 5), len(bars))
+    for second_high_index in sorted(candidate_indexes, key=lambda index: bars[index].high, reverse=True):
+        second_high_bar = bars[second_high_index]
+        prior_bars = bars[:second_high_index]
+        if not prior_bars:
+            continue
 
-    near_prior_high = prior_high_bar.high * 0.995 <= second_high_bar.high <= prior_high_bar.high * 1.002
-    rolled_over = latest.close <= second_high_bar.high * 0.996
-    still_extended = latest.vwap is None or latest.close >= latest.vwap * 1.005
-    weaker_volume = _volume_is_weaker(second_high_bar, prior_high_bar)
-    if near_prior_high and rolled_over and still_extended and weaker_volume:
+        prior_high_index = max(range(len(prior_bars)), key=lambda index: bars[index].high)
+        prior_high_bar = bars[prior_high_index]
+        pullback_bars = bars[prior_high_index + 1 : second_high_index]
+        if prior_high_bar.high <= 0 or not pullback_bars:
+            continue
+
+        pullback_low = min(bar.low for bar in pullback_bars)
+        near_prior_high = prior_high_bar.high * 0.995 <= second_high_bar.high <= prior_high_bar.high * 1.002
+        pulled_back = pullback_low <= prior_high_bar.high * 0.992
+        rebounded = second_high_bar.high >= pullback_low * 1.004
+        rolled_over = latest.close <= second_high_bar.high * 0.996
+        still_extended = latest.vwap is None or latest.close >= latest.vwap * 1.005
+        weaker_volume = _volume_is_weaker(second_high_bar, prior_high_bar)
+        if not (near_prior_high and pulled_back and rebounded and rolled_over and still_extended and weaker_volume):
+            continue
+
         distance = (prior_high_bar.high - latest.close) / prior_high_bar.high * 100
         return _context_signal(
             bar=latest,
@@ -480,6 +491,7 @@ def _failed_second_high_sell(bars: list[MinuteBar], position: PositionContext, c
             stop_condition="放量突破前高并站稳则取消高抛信号",
             reasons=[
                 "二次冲高未突破前高",
+                "前高后回踩再上冲",
                 "第二次冲高量能不强",
                 f"最新价较前高回落 {distance:.2f}%",
             ],

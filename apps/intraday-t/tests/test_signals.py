@@ -166,13 +166,63 @@ class SignalsTest(unittest.TestCase):
         self.assertIn("VWAP 回踩", "；".join(signal.reasons))
 
     def test_failed_second_high_sell_strategy(self) -> None:
-        bars = self.make_series([101.0, 103.0, 105.0, 103.4, 104.7, 104.0])
+        bars = [
+            self.make_bar(1.0, "2026-06-05T10:00:00+08:00", close=101.0, high=101.2, low=100.8),
+            self.make_bar(3.0, "2026-06-05T10:01:00+08:00", close=103.0, high=103.2, low=100.9),
+            self.make_bar(
+                4.8,
+                "2026-06-05T10:02:00+08:00",
+                close=104.8,
+                high=105.0,
+                low=102.8,
+                amount_delta=3000.0,
+            ),
+            self.make_bar(3.8, "2026-06-05T10:03:00+08:00", close=103.8, high=104.0, low=103.5),
+            self.make_bar(
+                4.6,
+                "2026-06-05T10:04:00+08:00",
+                close=104.6,
+                high=104.7,
+                low=103.7,
+                amount_delta=1800.0,
+            ),
+            self.make_bar(4.0, "2026-06-05T10:05:00+08:00", close=104.0, high=104.5, low=103.8),
+        ]
 
         signal = evaluate_latest_bar(bars, position=PositionContext())
 
         self.assertEqual(signal.signal, "high_sell")
         self.assertEqual(signal.strategy, "failed_second_high_sell")
         self.assertIn("二次冲高未突破前高", "；".join(signal.reasons))
+
+    def test_single_high_rollover_is_not_failed_second_high(self) -> None:
+        bars = [
+            self.make_bar(1.0, "2026-06-05T10:00:00+08:00", close=101.0, high=101.2, low=100.8),
+            self.make_bar(3.0, "2026-06-05T10:01:00+08:00", close=103.0, high=103.2, low=102.8),
+            self.make_bar(
+                4.8,
+                "2026-06-05T10:02:00+08:00",
+                close=104.8,
+                high=105.0,
+                low=103.9,
+                amount_delta=3000.0,
+            ),
+            self.make_bar(
+                4.5,
+                "2026-06-05T10:03:00+08:00",
+                close=104.5,
+                high=104.8,
+                low=104.4,
+                amount_delta=1700.0,
+            ),
+            self.make_bar(4.2, "2026-06-05T10:04:00+08:00", close=104.2, high=104.4, low=104.0),
+            self.make_bar(3.9, "2026-06-05T10:05:00+08:00", close=103.9, high=104.2, low=103.8),
+        ]
+
+        signal = evaluate_latest_bar(bars, position=PositionContext())
+
+        self.assertNotEqual(signal.strategy, "failed_second_high_sell")
+        self.assertNotEqual(signal.signal, "high_sell")
 
     def test_second_low_reversal_buy_strategy(self) -> None:
         bars = self.make_series([99.0, 97.0, 95.0, 96.3, 95.3, 96.1])
